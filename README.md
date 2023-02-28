@@ -25,16 +25,13 @@ POST nubeck/api/v1/despesa
 }
 ```
 **Campos da Requisição**
-| Campo | Obrigatório | Tipo | Decrição |
-|-|-|-|-
-|valor|sim|decimal| o valor da despesa
-|categoria|sim|int| O id da categoria 
-previamente cadastrada
-|conta_id|sim|int| O id da categoria da despesa|
-deve ser uma conta previamente cadastradapreviamente cadastrada
-|dat|sim|data| a data da despesa 
-|descricao|não|texto| uma descrição da 
-despesa com no máximo 255 caracteres
+| Campo | Obrigatório | Tipo  | Descrição |
+|-------|:-------------:|-------|-----------|
+|valor  |sim          |decimal|O valor da despesa, deve ser maior que zero
+|categoria_id|sim|int| O id da categoria da despesa, deve ser uma categoria previamente cadastrada
+|conta_id|sim|int| O id da conta da despesa, deve ser uma conta previamente cadastrada
+|data|sim|data| a data da despesa
+|descricao|não|texto| uma descrição da despesa com no máximo 255 caracteres
 
 **Código de Requisição**
 
