@@ -3,7 +3,7 @@
 ## Endpoints
 
 - [Cadastro de despesa](#cadastro-de-despesa)
-- [Detalhar despesas](#cadastro-de-despesa)
+- [Detalhar despesas](#detalhar-despesas)
 - Lista de despesas
 - Apagar despesa
 - Editar despesa
@@ -30,7 +30,7 @@ POST nubeck/api/v1/despesa
 |valor|sim|decimal| o valor da despesa
 |categoria|sim|int| O id da categoria 
 previamente cadastrada
-|conta_id|sim|int| O id da categoria da despesa,
+|conta_id|sim|int| O id da categoria da despesa|
 deve ser uma conta previamente cadastradapreviamente cadastrada
 |dat|sim|data| a data da despesa 
 |descricao|não|texto| uma descrição da 
