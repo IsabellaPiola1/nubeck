@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,15 @@ public class DespesaController {
     @PostMapping("/api/v1/despesas")
     public void create(@RequestBody Despesa despesa){
         log.info("cadstrar despesa: " + despesa);
+        despesa.setId(despesa.size() + 1L);
         despesas.add(despesa);
+    }
+
+    @GetMapping("/api/v1/despesas/{id}")
+    public Despesa show(@PathVariable Long id){
+        log.info("buscando despesa: " + id);
+        var despesaEncontrada = despesas.stream().filter(d -> d.getId().equals(id)).findFirst();
+        return despesaEncontrada.get();
     }
     
 }

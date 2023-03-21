@@ -46,6 +46,9 @@ public class Despesa {
     public String toString() {
         return "Despesa [id=" + id + ", valor=" + valor + ", data=" + data + ", descricao=" + descricao + "]";
     }
+    public long size() {
+        return 0;
+    }
 
     
     
