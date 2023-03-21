@@ -49,11 +49,7 @@ public class Despesa {
     public long size() {
         return 0;
     }
-
-    
-    
-
-
-
+    public void add(Despesa despesa) {
+    }
 
 }
