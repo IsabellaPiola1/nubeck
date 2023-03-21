@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,17 +29,20 @@ public class DespesaController {
     }
 
     @PostMapping("/api/v1/despesas")
-    public void create(@RequestBody Despesa despesa){
+    public ResponseEntity<Despesa> create(@RequestBody Despesa despesa){
         log.info("cadstrar despesa: " + despesa);
         despesa.setId(despesa.size() + 1L);
         despesas.add(despesa);
+        return ResponseEntity.status(HttpStatus.CREATED).body(despesa);
     }
 
     @GetMapping("/api/v1/despesas/{id}")
-    public Despesa show(@PathVariable Long id){
+    public ResponseEntity<Despesa> show(@PathVariable Long id){
         log.info("buscando despesa: " + id);
         var despesaEncontrada = despesas.stream().filter(d -> d.getId().equals(id)).findFirst();
-        return despesaEncontrada.get();
+        if(despesaEncontrada.isEmpty()) 
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.ok(despesaEncontrada.get());
     }
     
 }
