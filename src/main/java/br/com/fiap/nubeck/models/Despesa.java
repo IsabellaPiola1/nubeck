@@ -3,15 +3,21 @@ package br.com.fiap.nubeck.models;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+@Entity
 public class Despesa {
-
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
     private BigDecimal valor;
     private LocalDate data;
     private String descricao;
 
-    
+    protected Despesa(){}
+
     public Despesa(Long id, BigDecimal valor, LocalDate data, String descricao) {
         this.id = id;
         this.valor = valor;
