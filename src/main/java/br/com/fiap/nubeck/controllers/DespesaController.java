@@ -1,9 +1,13 @@
 package br.com.fiap.nubeck.controllers;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.fiap.nubeck.models.Despesa;
 import br.com.fiap.nubeck.repository.DespesaRepository;
 
-
 @RestController
 @RequestMapping("/api/v1/despesas")
 public class DespesaController {
@@ -27,7 +30,7 @@ public class DespesaController {
     Logger log = LoggerFactory.getLogger(DespesaController.class);
 
     @Autowired
-    DespesaRepository repository;
+    DespesaRepository repository; //IoD
 
     @GetMapping
     public List<Despesa> index(){
@@ -36,7 +39,7 @@ public class DespesaController {
 
     @PostMapping
     public ResponseEntity<Despesa> create(@RequestBody Despesa despesa){
-        log.info("cadstrar despesa: " + despesa);
+        log.info("cadastrando despesa: " + despesa);
         repository.save(despesa);
         return ResponseEntity.status(HttpStatus.CREATED).body(despesa);
     }
@@ -44,34 +47,42 @@ public class DespesaController {
     @GetMapping("{id}")
     public ResponseEntity<Despesa> show(@PathVariable Long id){
         log.info("buscando despesa: " + id);
-        //verificar se existe o Array
         var despesaEncontrada = repository.findById(id);
+
         if(despesaEncontrada.isEmpty()) 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
         return ResponseEntity.ok(despesaEncontrada.get());
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Despesa> destroy(@PathVariable Long id){
         log.info("apagando despesa: " + id);
+
         var despesaEncontrada = repository.findById(id);
+
         if(despesaEncontrada.isEmpty()) 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
         repository.delete(despesaEncontrada.get());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); //no content 200 + 04
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Despesa> update(@PathVariable Long id, @RequestBody Despesa despesa){
         log.info("atualizando despesa: " + id);
+
         var despesaEncontrada = repository.findById(id);
+
         if(despesaEncontrada.isEmpty()) 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        //BeanUtils.copyProperties(despesa, despesaAtualizada, "id");
+        
         despesa.setId(id);
         repository.save(despesa);
-        return ResponseEntity.ok(despesa); //no content 200 + 04
+        return ResponseEntity.ok(despesa);
     }
-
-
     
 }
