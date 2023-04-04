@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.fiap.nubeck.models.Despesa;
 import br.com.fiap.nubeck.repository.DespesaRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/despesas")
@@ -34,7 +35,7 @@ public class DespesaController {
     }
 
     @PostMapping
-    public ResponseEntity<Despesa> create(@RequestBody Despesa despesa){
+    public ResponseEntity<Despesa> create(@RequestBody @Valid Despesa despesa){
         log.info("cadastrando despesa: " + despesa);
         repository.save(despesa);
         return ResponseEntity.status(HttpStatus.CREATED).body(despesa);
