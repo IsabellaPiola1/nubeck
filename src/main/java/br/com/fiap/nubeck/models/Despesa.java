@@ -17,14 +17,14 @@ import jakarta.validation.constraints.Size;
 public class Despesa {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
-
+    
     @NotNull @Min(value = 0, message = "deve ser positivo")
     private BigDecimal valor;
 
     @NotNull @PastOrPresent
     private LocalDate data;
 
-    @NotBlank @Size(min = 5, max = 255, message = "deve ser uma descricao significativa")
+    @NotBlank @Size(min = 5, max = 255, message = "deve ser uma descrição significativa")
     private String descricao;
 
     protected Despesa(){}
