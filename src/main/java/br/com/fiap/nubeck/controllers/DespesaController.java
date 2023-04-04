@@ -67,7 +67,7 @@ public class DespesaController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Despesa> update(@PathVariable Long id, @RequestBody Despesa despesa){
+    public ResponseEntity<Despesa> update(@PathVariable Long id, @RequestBody @Valid Despesa despesa){
         log.info("atualizando despesa: " + id);
 
         var despesaEncontrada = repository.findById(id);
