@@ -1,4 +1,5 @@
 package br.com.fiap.nubeck.controllers;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.fiap.nubeck.exception.RestNotFoundException;
 import br.com.fiap.nubeck.models.Despesa;
+import br.com.fiap.nubeck.repository.ContaRepository;
 import br.com.fiap.nubeck.repository.DespesaRepository;
 import jakarta.validation.Valid;
 
@@ -28,11 +30,14 @@ public class DespesaController {
     Logger log = LoggerFactory.getLogger(DespesaController.class);
 
     @Autowired
-    DespesaRepository repository; //IoD
+    DespesaRepository despesaRespository; //IoD
+
+    @Autowired
+    ContaRepository contaRepository;
 
     @GetMapping
     public List<Despesa> index(){
-        return repository.findAll();
+        return despesaRespository.findAll();
     }
 
     @PostMapping
@@ -41,7 +46,8 @@ public class DespesaController {
             BindingResult result
         ){
         log.info("cadastrando despesa: " + despesa);
-        repository.save(despesa);
+        despesaRespository.save(despesa);
+        despesa.setConta(contaRepository.findById(despesa.getConta().getId()).get());
         return ResponseEntity.status(HttpStatus.CREATED).body(despesa);
     }
 
@@ -54,7 +60,7 @@ public class DespesaController {
     @DeleteMapping("{id}")
     public ResponseEntity<Despesa> destroy(@PathVariable Long id){
         log.info("apagando despesa: " + id);
-        repository.delete(getDespesa(id));
+        despesaRespository.delete(getDespesa(id));
         return ResponseEntity.noContent().build();
     }
 
@@ -66,12 +72,12 @@ public class DespesaController {
         log.info("atualizando despesa: " + id);
         getDespesa(id);
         despesa.setId(id);
-        repository.save(despesa);
+        despesaRespository.save(despesa);
         return ResponseEntity.ok(despesa);
     }
 
     private Despesa getDespesa(Long id) {
-        return repository.findById(id).orElseThrow(
+        return despesaRespository.findById(id).orElseThrow(
             () -> new RestNotFoundException("despesa não encontrada"));
     }
     
