@@ -1,4 +1,4 @@
-package br.com.fiap.config;
+package br.com.fiap.nubeck.config;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
