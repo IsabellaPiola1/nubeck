@@ -1,10 +1,11 @@
 package br.com.fiap.nubeck.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,27 +36,34 @@ public class DespesaController {
     @Autowired
     ContaRepository contaRepository;
 
+    @Autowired
+    PagedResourcesAssembler<Object> assembler;
+
     @GetMapping
-    public Page<Despesa> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable) {
-        if (busca == null)
-            return despesaRespository.findAll(pageable);
-        return despesaRespository.findByDescricaoContaining(busca, pageable);
+    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable) {
+        var despesas = (busca == null) ? 
+            despesaRespository.findAll(pageable): 
+            despesaRespository.findByDescricaoContaining(busca, pageable);
+
+        return assembler.toModel(despesas.map(Despesa::toEntityModel)); //HAL
     }
 
     @PostMapping
-    public ResponseEntity<Despesa> create(
+    public ResponseEntity<EntityModel<Despesa>> create(
             @RequestBody @Valid Despesa despesa,
             BindingResult result) {
         log.info("cadastrando despesa: " + despesa);
         despesaRespository.save(despesa);
         despesa.setConta(contaRepository.findById(despesa.getConta().getId()).get());
-        return ResponseEntity.status(HttpStatus.CREATED).body(despesa);
+        return ResponseEntity
+            .created(despesa.toEntityModel().getRequiredLink("self").toUri())
+            .body(despesa.toEntityModel());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Despesa> show(@PathVariable Long id) {
+    public EntityModel<Despesa> show(@PathVariable Long id) {
         log.info("buscando despesa: " + id);
-        return ResponseEntity.ok(getDespesa(id));
+        return getDespesa(id).toEntityModel();
     }
 
     @DeleteMapping("{id}")
@@ -66,14 +74,14 @@ public class DespesaController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Despesa> update(
+    public ResponseEntity<EntityModel<Despesa>> update(
             @PathVariable Long id,
             @RequestBody @Valid Despesa despesa) {
         log.info("atualizando despesa: " + id);
         getDespesa(id);
         despesa.setId(id);
         despesaRespository.save(despesa);
-        return ResponseEntity.ok(despesa);
+        return ResponseEntity.ok(despesa.toEntityModel());
     }
 
     private Despesa getDespesa(Long id) {
