@@ -1,5 +1,6 @@
 package br.com.fiap.nubeck.controllers;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -22,12 +23,19 @@ import br.com.fiap.nubeck.exception.RestNotFoundException;
 import br.com.fiap.nubeck.models.Despesa;
 import br.com.fiap.nubeck.repository.ContaRepository;
 import br.com.fiap.nubeck.repository.DespesaRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/despesas")
 @Slf4j
+@SecurityRequirement(name = "bearer-key")
+@Tag(name = "despesa")
 public class DespesaController {
 
     @Autowired
@@ -40,7 +48,7 @@ public class DespesaController {
     PagedResourcesAssembler<Object> assembler;
 
     @GetMapping
-    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @PageableDefault(size = 5) Pageable pageable) {
+    public PagedModel<EntityModel<Object>> index(@RequestParam(required = false) String busca, @ParameterObject @PageableDefault(size = 5) Pageable pageable) {
         var despesas = (busca == null) ? 
             despesaRespository.findAll(pageable): 
             despesaRespository.findByDescricaoContaining(busca, pageable);
@@ -49,6 +57,10 @@ public class DespesaController {
     }
 
     @PostMapping
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "a despesa foi cadastrada com sucesso"),
+        @ApiResponse(responseCode = "400", description = "os dados enviados são inválidos")
+    })
     public ResponseEntity<EntityModel<Despesa>> create(
             @RequestBody @Valid Despesa despesa,
             BindingResult result) {
@@ -61,6 +73,10 @@ public class DespesaController {
     }
 
     @GetMapping("{id}")
+    @Operation(
+        summary = "Detalhes da despesa",
+        description = "Retornar os dados da despesa de acordo com o id informado no path"
+    )
     public EntityModel<Despesa> show(@PathVariable Long id) {
         log.info("buscando despesa: " + id);
         return getDespesa(id).toEntityModel();
